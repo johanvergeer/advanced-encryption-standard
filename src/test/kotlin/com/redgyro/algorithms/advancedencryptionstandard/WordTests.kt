@@ -37,7 +37,7 @@ class WordTests {
 
 
     @Test
-    fun `Rotate bytes left`(){
+    fun `Rotate bytes left 1 position`(){
         val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
 
         assertEquals(Word(0x01, 0x02, 0x03, 0x00), word.rotateLeft())
@@ -45,10 +45,58 @@ class WordTests {
 
 
     @Test
-    fun `Rotate bytes Right`(){
+    fun `Rotate bytes left 1 position explicit`(){
+        val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
+
+        assertEquals(Word(0x01, 0x02, 0x03, 0x00), word.rotateLeft(positions = 1))
+    }
+
+
+    @Test
+    fun `Rotate bytes left 2 positions`(){
+        val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
+
+        assertEquals(Word(0x02, 0x03, 0x00, 0x01), word.rotateLeft(positions = 2))
+    }
+
+
+    @Test
+    fun `Rotate bytes left 3 positions`(){
+        val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
+
+        assertEquals(Word(0x03, 0x00, 0x01, 0x02), word.rotateLeft(positions = 3))
+    }
+
+
+    @Test
+    fun `Rotate bytes Right 1 position`(){
         val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
 
         assertEquals(Word(0x03, 0x00, 0x01, 0x02), word.rotateRight())
+    }
+
+
+    @Test
+    fun `Rotate bytes Right 1 position explicit`(){
+        val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
+
+        assertEquals(Word(0x03, 0x00, 0x01, 0x02), word.rotateRight(positions = 1))
+    }
+
+
+    @Test
+    fun `Rotate bytes Right 2 positions`(){
+        val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
+
+        assertEquals(Word(0x02, 0x03, 0x00, 0x01), word.rotateRight(positions = 2))
+    }
+
+
+    @Test
+    fun `Rotate bytes Right 3 positions`(){
+        val word = Word(listOf(0x00, 0x01, 0x02, 0x03))
+
+        assertEquals(Word(0x01, 0x02, 0x03, 0x00), word.rotateRight(positions = 3))
     }
 
 

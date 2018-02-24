@@ -59,22 +59,28 @@ class Word : TypedMaxLengthMutableList<Int> {
 
     /**
      * Rotate a word left
+     *
+     * @param positions The number of positions the bytes should rotate
      */
-    fun rotateLeft(): Word {
-        val tempWord = this.slice(1 until this.size).toMutableList()
-        tempWord.add(this[0])
-
-        return Word(ArrayList(tempWord))
+    fun rotateLeft(positions: Int = 1): Word {
+        return when (positions) {
+            1 -> Word(this[1], this[2], this[3], this[0])
+            2 -> Word(this[2], this[3], this[0], this[1])
+            3 -> Word(this[3], this[0], this[1], this[2])
+            else -> Word(this)
+        }
     }
 
     /**
      * Rotate a word right
      */
-    fun rotateRight(): Word {
-        val tempWord = mutableListOf(this[this.size - 1])
-        tempWord.addAll(this.slice(0 until this.size - 1))
-
-        return Word(ArrayList(tempWord))
+    fun rotateRight(positions: Int = 1 ): Word {
+        return when (positions) {
+            1 -> Word(this[3], this[0], this[1], this[2])
+            2 -> Word(this[2], this[3], this[0], this[1])
+            3 -> Word(this[1], this[2], this[3], this[0])
+            else -> Word(this)
+        }
     }
 
     override fun equals(other: Any?): Boolean {
