@@ -1,9 +1,9 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-class State: TypedMaxLengthMutableList<Word> {
+class State : TypedMaxLengthMutableList<Word> {
 
-    constructor(words: List<Word>){
-        assert(words.size == 4, {"A State object must contain exactly 4 words"})
+    constructor(words: List<Word>) {
+        assert(words.size == 4, { "A State object must contain exactly 4 words" })
         this.addAll(words)
     }
 
@@ -24,5 +24,10 @@ class State: TypedMaxLengthMutableList<Word> {
         return javaClass.hashCode()
     }
 
-
+    override fun toString(): String {
+        return "State:\n${innerList[0]}\n" +
+                "${innerList[1]}\n" +
+                "${innerList[2]}\n" +
+                "${innerList[3]}\n"
+    }
 }

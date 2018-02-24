@@ -3,14 +3,22 @@ package com.redgyro.algorithms.advancedencryptionstandard
 
 class Encryptor(val content: String, private val cypherKey: Key) {
     internal val keys = mutableListOf<Key>()
-    private var cycles: Int = 10
+    private var rounds: Int = 10
 
     init {
-        // The number of cycles to encrypt the data
-        this.cycles = when (cypherKey.size) {
+        // The number of rounds to encrypt the data
+        this.rounds = when (cypherKey.size) {
             4 -> 10
             6 -> 12
             else -> 14
+        }
+
+        // Start with performing key expansion
+        expandKeys()
+
+        // Next perform all operations for each round on the State
+        for (round in 1..rounds) {
+
         }
     }
 
@@ -19,7 +27,7 @@ class Encryptor(val content: String, private val cypherKey: Key) {
         keys.add(cypherKey)
 
         // Add a expanded key for each cycle
-        for (cycle in 1..cycles) {
+        for (cycle in 1..rounds) {
             keys.add(expandKey(cycle, keys.last()))
         }
     }

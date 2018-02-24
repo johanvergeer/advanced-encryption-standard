@@ -1,14 +1,11 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-//fun getStatesFromString(stringInput: String): List<State> {
-//    return getStatesFromHexString(stringToHex(stringInput))
-//}
-//
-//fun getStatesFromHexString(hexInput: String): List<State> {
-//    val hexList = ArrayList(hexStringToList(hexInput))
-//
-//    return getStatesFromHexList(hexList)
-//}
+fun getStatesFromString(stringInput: String): List<State> {
+    val bytes = stringInput.toByteArray()
+    val hexList = bytes.map { byte -> byte.toInt() }
+
+    return getStatesFromHexList(hexList)
+}
 
 fun getStatesFromHexList(hexList: List<Int>): List<State> {
     val states = arrayListOf<State>()
