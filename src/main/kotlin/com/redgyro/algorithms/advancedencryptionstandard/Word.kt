@@ -1,8 +1,6 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-import com.redgyro.education.cssdaes.advancedEncryptionStandard.transformationTables.rCon
-import com.redgyro.education.cssdaes.advancedEncryptionStandard.transformationTables.sBox
-import com.redgyro.education.cssdaes.advancedEncryptionStandard.transformationTables.sBoxInverse
+import com.redgyro.education.cssdaes.advancedEncryptionStandard.transformationTables.*
 
 class Word : TypedMaxLengthMutableList<Int> {
 
@@ -32,14 +30,14 @@ class Word : TypedMaxLengthMutableList<Int> {
     /**
      * Perform SubBytes operation using sBox
      */
-    fun sBoxReplace(): Word {
+    fun subBytes(): Word {
         return Word(listOf(sBox[this[0]], sBox[this[1]], sBox[this[2]], sBox[this[3]]))
     }
 
     /**
      * Perform SubBytes operation using inverse sBox
      */
-    fun sBoxInverseReplace(): Word {
+    fun subBytesInverse(): Word {
         return Word(listOf(sBoxInverse[this[0]], sBoxInverse[this[1]], sBoxInverse[this[2]], sBoxInverse[this[3]]))
     }
 
@@ -62,7 +60,7 @@ class Word : TypedMaxLengthMutableList<Int> {
      *
      * @param positions The number of positions the bytes should rotate
      */
-    fun rotateLeft(positions: Int = 1): Word {
+    fun shiftBytesLeft(positions: Int = 1): Word {
         return when (positions) {
             1 -> Word(this[1], this[2], this[3], this[0])
             2 -> Word(this[2], this[3], this[0], this[1])
@@ -74,13 +72,22 @@ class Word : TypedMaxLengthMutableList<Int> {
     /**
      * Rotate a word right
      */
-    fun rotateRight(positions: Int = 1 ): Word {
+    fun shiftBytesRight(positions: Int = 1): Word {
         return when (positions) {
             1 -> Word(this[3], this[0], this[1], this[2])
             2 -> Word(this[2], this[3], this[0], this[1])
             3 -> Word(this[1], this[2], this[3], this[0])
             else -> Word(this)
         }
+    }
+
+    fun mixColumns(): Word {
+        return Word(
+                mul2[this[0]] xor mul3[this[1]] xor this[2] xor this[3],
+                this[0] xor mul2[this[1]] xor mul3[this[2]] xor this[3],
+                this[0] xor this[1] xor mul2[this[2]] xor mul3[this[3]],
+                mul3[this[0]] xor this[1] xor this[2] xor mul2[this[3]]
+        )
     }
 
     override fun equals(other: Any?): Boolean {

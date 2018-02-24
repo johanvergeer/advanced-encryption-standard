@@ -3,6 +3,8 @@ package com.redgyro.algorithms.advancedencryptionstandard
 
 class Encryptor(val content: String, private val cypherKey: Key) {
     internal val keys = mutableListOf<Key>()
+    internal var statesInput: List<State>
+    internal val statesOutput = mutableListOf<State>()
     private var rounds: Int = 10
 
     init {
@@ -14,11 +16,24 @@ class Encryptor(val content: String, private val cypherKey: Key) {
         }
 
         // Start with performing key expansion
-        expandKeys()
+        this.expandKeys()
 
-        // Next perform all operations for each round on the State
-        for (round in 1..rounds) {
+        // Get state objects from input string
+        this.statesInput = getStatesFromString(this.content)
 
+
+        // Perform all operations on each state in the states list
+        statesInput.forEach { state ->
+            for (round in 1..rounds) {
+                val wordsOutput = (0..3).map{ wordNo ->
+                    val word = state[wordNo]
+                    val wordSubBytes = word.subBytes()
+                    val wordShiftRows= wordSubBytes.shiftBytesLeft(wordNo)
+                    val wordMixColumns = wordShiftRows.mixColumns()
+                }
+
+
+            }
         }
     }
 
@@ -37,7 +52,7 @@ class Encryptor(val content: String, private val cypherKey: Key) {
         var lastWord = lastKey.last()
 
         // Create a temporary list for the next key and add the first word
-        val nextKeyWords = arrayListOf(lastWord.rotateLeft().sBoxReplace().rConReplace(cycleNo, lastKey[0]))
+        val nextKeyWords = arrayListOf(lastWord.shiftBytesLeft().subBytes().rConReplace(cycleNo, lastKey[0]))
 
         // Add the rest of the words to the temporary list
         for (k in 1 until cypherKey.size) {
