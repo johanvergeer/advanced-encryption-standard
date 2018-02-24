@@ -11,6 +11,7 @@ class EncryptorTest {
     lateinit var key: Key
     lateinit var firstExpandedKeyExpectation: Key
     lateinit var lastExpandedKeyExpectation: Key
+    lateinit var initialState: State
 
     lateinit var encryptor: Encryptor
 
@@ -34,7 +35,15 @@ class EncryptorTest {
                 Word(0xE1, 0x3F, 0x0C, 0xC8),
                 Word(0xB6, 0x63, 0x0C, 0xA6))
 
-        this.encryptor = Encryptor("", this.key)
+
+        this.initialState = State(
+                Word(0x32, 0x43, 0xF6, 0xA8),
+                Word(0x88, 0x5A, 0x30, 0x8D),
+                Word(0x31, 0x31, 0x98, 0xA2),
+                Word(0xE0, 0x37, 0x07, 0x34)
+        )
+
+        this.encryptor = Encryptor(listOf(this.initialState), this.key)
     }
 
     @Test
@@ -67,5 +76,20 @@ class EncryptorTest {
 
 
         assertEquals(this.lastExpandedKeyExpectation, lastKey)
+    }
+
+    @Test
+    fun `Encrypt a single state`() {
+
+        val expectedFinalState = listOf(
+                State(
+                        Word(0x39, 0x25, 0x84, 0x1D),
+                        Word(0x02, 0xDC, 0x09, 0xFB),
+                        Word(0xDC, 0x11, 0x85, 0x97),
+                        Word(0x19, 0x6a, 0x0B, 0x32)
+                )
+        )
+
+        assertEquals(expectedFinalState, this.encryptor.encryptedStates)
     }
 }

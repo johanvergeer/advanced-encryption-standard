@@ -110,7 +110,9 @@ class Word : TypedMaxLengthMutableList<Int> {
     }
 
     override fun toString(): String {
-        return this.joinToString(separator = ", ", transform = { i -> "0x${java.lang.Integer.toHexString(i)}" })
+        return this.joinToString(
+                separator = ", ",
+                transform = { i -> "0x${java.lang.Integer.toHexString(i).padStart(2, '0').toUpperCase()}" })
     }
 
 

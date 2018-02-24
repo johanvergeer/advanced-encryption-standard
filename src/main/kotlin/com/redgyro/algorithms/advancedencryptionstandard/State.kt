@@ -30,4 +30,31 @@ class State : TypedMaxLengthMutableList<Word> {
                 "${innerList[2]}\n" +
                 "${innerList[3]}\n"
     }
+
+    fun subBytes(): State {
+        return State((0..3).map { word ->
+            this[word].subBytes()
+        })
+    }
+
+    fun shiftRows(): State {
+        return State(
+                Word(this[0][0], this[1][1], this[2][2], this[3][3]),
+                Word(this[1][0], this[2][1], this[3][2], this[0][3]),
+                Word(this[2][0], this[3][1], this[0][2], this[1][3]),
+                Word(this[3][0], this[0][1], this[1][2], this[2][3])
+        )
+    }
+
+    fun mixColumns(): State {
+        return State((0..3).map { word ->
+            this[word].mixColumns()
+        })
+    }
+
+    fun addRoundKey(key: Key): State {
+        return State((0..3).map { word ->
+            this[word].addKey(key[word])
+        })
+    }
 }

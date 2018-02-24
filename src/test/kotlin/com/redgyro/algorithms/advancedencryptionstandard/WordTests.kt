@@ -1,8 +1,8 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 
 
@@ -25,13 +25,12 @@ class WordTests {
 
     @Test
     fun `Create new word less then 4 bytes`() {
-        val exception = assertThrows(AssertionError::class.java, { Word(listOf(0x00, 0x01, 0x02)) })
+        val exception = assertThrows<AssertionError>({ Word(listOf(0x00, 0x01, 0x02)) })
     }
 
     @Test
     fun `Create new word more then 4 bytes`() {
-        val exception = assertThrows(
-                AssertionError::class.java,
+        val exception = assertThrows<AssertionError>(
                 { Word(listOf(0x00, 0x01, 0x02, 0x03, 0x04)) }
         )
     }
