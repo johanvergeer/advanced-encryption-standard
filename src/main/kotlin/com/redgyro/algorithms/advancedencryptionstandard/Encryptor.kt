@@ -70,69 +70,6 @@ class Encryptor(private val statesInput: List<State>, private val cypherKey: Key
         return this
     }
 
-//    private fun encryptStateForRound(roundState: State, roundKey: Key, roundNo: Int,
-//                                     subBytes: Boolean = true, shiftRow: Boolean = true,
-//                                     mixColumns: Boolean = true): State {
-//        // ArrayLists to log the output of each step
-//        val originalWords = arrayListOf<Word>()
-//        val afterSubByte = arrayListOf<Word>()
-//        val afterShiftRow = arrayListOf<Word>()
-//        val afterMixColumns = arrayListOf<Word>()
-//        val afterKey = arrayListOf<Word>()
-//
-//
-//        val state = State((0..3).map { wordNo ->
-//            var word = roundState[wordNo]
-//            originalWords.add(word)
-//
-//            if (subBytes) {
-//                word = word.subBytes()
-//                afterSubByte.add(word)
-//            }
-//
-//            if (shiftRow) {
-//                word = word.shiftBytesLeft(wordNo)
-//                afterShiftRow.add(word)
-//            }
-//
-//            if (mixColumns) {
-//                word = word.mixColumns()
-//                afterMixColumns.add(word)
-//            }
-//
-//            word = word.addKey(roundKey[wordNo])
-//            afterKey.add(word)
-//
-//            word
-//        })
-//
-//        val logString = StringBuilder(
-//                "ROUND ${roundNo.toString().padStart(2, ' ')} | Start of round        | After sub bytes       | After shift rows         | After mix columns        | After round key\n"
-//        )
-//
-//        (0..3).forEach { byte ->
-//            val originalWord = toLogString(byte, originalWords)
-//            val subByteWord = toLogString(byte, afterSubByte)
-//            val shiftRowsWord = toLogString(byte, afterShiftRow)
-//            val mixColumnsWord = toLogString(byte, afterMixColumns)
-//            val keyWordWord = toLogString(byte, afterKey)
-//
-//            logString.append("         | $originalWord| $subByteWord| $shiftRowsWord   | $mixColumnsWord   | $keyWordWord\n")
-//        }
-//
-//        println(logString)
-//
-//        return state
-//    }
-//
-//    private fun toLogString(byteNo: Int, words: List<Word>): String {
-//        val emptyString = "".padStart(22, ' ')
-//
-//        return if (words.isNotEmpty()) (0..3).map { word -> words[word][byteNo] }.joinToString(
-//                separator = ", ",
-//                transform = { i -> "0x${java.lang.Integer.toHexString(i).padStart(2, '0').toUpperCase()}" }) else emptyString
-//    }
-
     private fun expandKeys() {
         // Add the original cypherKey to the list
         keys.add(cypherKey)
