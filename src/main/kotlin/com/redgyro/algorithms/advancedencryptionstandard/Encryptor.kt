@@ -24,15 +24,30 @@ class Encryptor(val content: String, private val cypherKey: Key) {
 
         // Perform all operations on each state in the states list
         statesInput.forEach { state ->
-            for (round in 1..rounds) {
-                val wordsOutput = (0..3).map{ wordNo ->
-                    val word = state[wordNo]
-                    val wordSubBytes = word.subBytes()
-                    val wordShiftRows= wordSubBytes.shiftBytesLeft(wordNo)
-                    val wordMixColumns = wordShiftRows.mixColumns()
-                }
+            var roundState = state
+
+            (1..rounds).forEach { round ->
+                val roundKey = this.keys[round]
+
+                roundState = encryptStateForRound(roundState, roundKey, true)
             }
+
+            statesOutput.add(encryptStateForRound(roundState, this.keys.last(), false))
         }
+    }
+
+    private fun encryptStateForRound(roundState: State, roundKey: Key, performMixColumns: Boolean = true): State {
+
+        return State((0..3).map { wordNo ->
+            var word = roundState[wordNo]
+            word = word.subBytes()
+            word = word.shiftBytesLeft(wordNo)
+
+            if (performMixColumns)
+                word = word.mixColumns()
+
+            word.addKey(roundKey[wordNo])
+        })
     }
 
     private fun expandKeys() {
