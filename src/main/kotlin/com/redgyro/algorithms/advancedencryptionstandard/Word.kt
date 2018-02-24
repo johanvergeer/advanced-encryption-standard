@@ -90,6 +90,15 @@ class Word : TypedMaxLengthMutableList<Int> {
         )
     }
 
+    fun addKey(key: Word): Word {
+        return Word(
+                this[0] xor key[0],
+                this[1] xor key[1],
+                this[2] xor key[2],
+                this[3] xor key[3]
+        )
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other is Word && other.innerList == this.innerList) return true

@@ -1,10 +1,12 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.boot.test.context.SpringBootTest
 
-import org.junit.Assert.*
-import org.junit.Before
 
+@SpringBootTest
 class EncryptorTest {
     lateinit var key: Key
     lateinit var firstExpandedKeyExpectation: Key
@@ -12,7 +14,7 @@ class EncryptorTest {
 
     lateinit var encryptor: Encryptor
 
-    @Before
+    @BeforeEach
     fun `setup`() {
         this.key = Key(
                 Word(0x2B, 0x7E, 0x15, 0x16),
@@ -39,7 +41,8 @@ class EncryptorTest {
     fun `Create list containing expanded keys`() {
         // The list should have a length of 11 keys.
 
-        this.encryptor.expandKeys()
+        // expandKeys() is called in init block
+//        this.encryptor.expandKeys()
 
         assertEquals(11, this.encryptor.keys.size)
         assertEquals(this.firstExpandedKeyExpectation, this.encryptor.keys[1])

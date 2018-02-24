@@ -31,13 +31,11 @@ class Encryptor(val content: String, private val cypherKey: Key) {
                     val wordShiftRows= wordSubBytes.shiftBytesLeft(wordNo)
                     val wordMixColumns = wordShiftRows.mixColumns()
                 }
-
-
             }
         }
     }
 
-    fun expandKeys() {
+    private fun expandKeys() {
         // Add the original cypherKey to the list
         keys.add(cypherKey)
 
