@@ -260,4 +260,23 @@ class AESTest {
 
         assertEquals(expectedStatesCBC, encryptedState)
     }
+
+    @Test
+    fun `Decrypt a list of states using CBC`() {
+
+        val encryptedState = aesEncrypt(
+                this.initialStates,
+                this.key128bit,
+                BlockCypherMode.CBC,
+                this.initializationVector)
+
+        val decryptedState = aesDecrypt(
+                encryptedState,
+                this.key128bit,
+                BlockCypherMode.CBC,
+                this.initializationVector
+        )
+
+        assertEquals(this.initialStates, decryptedState)
+    }
 }
