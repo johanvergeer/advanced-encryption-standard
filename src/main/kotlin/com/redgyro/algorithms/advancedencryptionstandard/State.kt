@@ -77,10 +77,13 @@ class State : TypedMaxLengthMutableList<Word> {
 
     fun addRoundKey(key: Key): State {
         return State((0..3).map { word ->
-            this[word].xorOtherWord(key[word])
+            this[word].addRoundKey(key[word])
         })
     }
 
+    /**
+     * Used for ECB Block Cypher mode
+     */
     fun xorOtherState(state: State): State{
         return State((0..3).map { word ->
             this[word].xorOtherWord(state[word])

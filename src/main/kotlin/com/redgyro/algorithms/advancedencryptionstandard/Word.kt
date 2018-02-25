@@ -53,7 +53,7 @@ class Word : TypedMaxLengthMutableList<Int> {
      *  0x03  xor   0x07  xor   0x00  = 0X04
      *  0x04  xor   0x08  xor   0x00  = 0X0C
      */
-    fun rConReplace(i: Int, word: Word): Word = Word((0 until 4).map { b -> word[b] xor this[b] xor rCon[i][b] })
+    fun rConReplace(i: Int, word: Word) = Word((0 until 4).map { b -> word[b] xor this[b] xor rCon[i][b] })
 
     /**
      * Rotate a word left
@@ -97,6 +97,11 @@ class Word : TypedMaxLengthMutableList<Int> {
                 mul13[this[0]] xor mul9[this[1]] xor mul14[this[2]] xor mul11[this[3]],
                 mul11[this[0]] xor mul13[this[1]] xor mul9[this[2]] xor mul14[this[3]]
         )
+    }
+
+    // Same as xorOtherWord, kept separate for clarity
+    fun addRoundKey(keyWord: Word): Word {
+        return xorOtherWord(keyWord)
     }
 
     fun xorOtherWord(otherWord: Word): Word {

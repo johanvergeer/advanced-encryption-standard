@@ -39,7 +39,7 @@ fun aesEncryptBlock(state: State,
         throw IllegalArgumentException("initializationVector state cannot be empty when blockCypherMode is CBC")
 
 
-    val rounds = cypherKey.getRoundsCount()
+    val rounds = cypherKey.getNumberOfRounds()
     // Start with performing key expansion
     val keys = cypherKey.expandKeys()
 
@@ -103,7 +103,7 @@ fun aesDecryptBlock(state: State,
     if (blockCypherMode == BlockCypherMode.CBC && initializationVector.size == 0)
         throw IllegalArgumentException("initializationVector state cannot be empty when blockCypherMode is CBC")
 
-    val rounds = cypherKey.getRoundsCount()
+    val rounds = cypherKey.getNumberOfRounds()
     // Start with performing key expansion
     val keys = cypherKey.expandKeys()
 
