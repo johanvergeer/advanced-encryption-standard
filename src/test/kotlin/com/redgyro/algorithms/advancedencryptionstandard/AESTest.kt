@@ -217,6 +217,53 @@ class AESTest {
     }
 
     @Test
+    fun `Encrypt a list of states using ECB`() {
+
+        val expectedFinalState = listOf(
+                State(
+                        Word(0xe8, 0x6c, 0x7b, 0x0c),
+                        Word(0x9a, 0x39, 0x42, 0xa2),
+                        Word(0x8a, 0xc6, 0x45, 0x44),
+                        Word(0x51, 0xa9, 0xda, 0x0c)
+                ),
+                State(
+                        Word(0xf8, 0xd3, 0xa5, 0xc6),
+                        Word(0x49, 0xbc, 0x4a, 0x49),
+                        Word(0x79, 0xd7, 0x84, 0xe9),
+                        Word(0xdc, 0xe9, 0x94, 0xe9)
+                ),
+                State(
+                        Word(0x5f, 0x6f, 0x87, 0x34),
+                        Word(0xf7, 0xe8, 0x94, 0xb7),
+                        Word(0x29, 0x4d, 0x14, 0xa1),
+                        Word(0x09, 0x31, 0x49, 0xc6)
+                ),
+                State(
+                        Word(0x60, 0xbc, 0x6d, 0xb0),
+                        Word(0x1c, 0xf1, 0x43, 0x1c),
+                        Word(0x5e, 0x10, 0x12, 0x14),
+                        Word(0x73, 0xa8, 0x65, 0xba)
+                ),
+                State(
+                        Word(0x2d, 0xf6, 0x39, 0x2c),
+                        Word(0x88, 0xe4, 0xf6, 0x94),
+                        Word(0x3e, 0x85, 0x0c, 0xc6),
+                        Word(0xbe, 0xba, 0xc9, 0xd8)
+                )
+        )
+
+        assertEquals(expectedFinalState, aesEncrypt(this.initialStates, this.key128bit))
+    }
+
+    @Test
+    fun `Encrypt and Decrypt a list of states using ECB`() {
+        val encryptedState= aesEncrypt(this.initialStates, this.key128bit)
+        val decryptedState = aesDecrypt(encryptedState, this.key128bit)
+
+        assertEquals(this.initialStates, decryptedState)
+    }
+
+    @Test
     fun `Encrypt a list of states using CBC`() {
 
         val expectedStatesCBC = listOf(
