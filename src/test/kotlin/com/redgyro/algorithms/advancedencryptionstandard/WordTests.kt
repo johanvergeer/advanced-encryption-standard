@@ -145,6 +145,6 @@ class WordTests {
         val key = Word(0xA0, 0xFA, 0xFE, 0x17)
         val expected = Word(0xA4, 0x9C, 0x7F, 0xF2)
 
-        assertEquals(expected, word.addKey(key))
+        assertEquals(expected, word.xorOtherWord(key))
     }
 }

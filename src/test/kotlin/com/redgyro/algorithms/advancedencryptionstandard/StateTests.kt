@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class StateTests {
 
     @BeforeEach
-    fun `setUp`(){
+    fun `setUp`() {
     }
 
     @Test
@@ -59,7 +59,7 @@ class StateTests {
     }
 
     @Test
-    fun `Sub Bytes for encryption`(){
+    fun `Sub Bytes for encryption`() {
         val initialState = State(
                 Word(0x19, 0x3D, 0xE3, 0xBE),
                 Word(0xA0, 0xF4, 0xE2, 0x2B),
@@ -77,7 +77,7 @@ class StateTests {
     }
 
     @Test
-    fun `Sub Bytes inverse for decription`(){
+    fun `Sub Bytes inverse for decription`() {
         val initialState = State(
                 Word(0x19, 0x3D, 0xE3, 0xBE),
                 Word(0xA0, 0xF4, 0xE2, 0x2B),
@@ -89,7 +89,7 @@ class StateTests {
     }
 
     @Test
-    fun `Shift rows for encryption`(){
+    fun `Shift rows for encryption`() {
         val initialState = State(
                 Word(0xD4, 0x27, 0x11, 0xAE),
                 Word(0xE0, 0xBF, 0x98, 0xF1),
@@ -108,7 +108,7 @@ class StateTests {
     }
 
     @Test
-    fun `Shift rows inverse for description`(){
+    fun `Shift rows inverse for description`() {
         val initialState = State(
                 Word(0xD4, 0x27, 0x11, 0xAE),
                 Word(0xE0, 0xBF, 0x98, 0xF1),
@@ -121,7 +121,7 @@ class StateTests {
     }
 
     @Test
-    fun `Mix Columns for encryption`(){
+    fun `Mix Columns for encryption`() {
         val initialState = State(
                 Word(0xD4, 0xBF, 0x5D, 0x30),
                 Word(0xE0, 0xB4, 0x52, 0xAE),
@@ -140,7 +140,7 @@ class StateTests {
     }
 
     @Test
-    fun `Mix Columns for decryption`(){
+    fun `Mix Columns for decryption`() {
         val initialState = State(
                 Word(0xD4, 0xBF, 0x5D, 0x30),
                 Word(0xE0, 0xB4, 0x52, 0xAE),
@@ -153,7 +153,7 @@ class StateTests {
     }
 
     @Test
-    fun `Add round key`(){
+    fun `Add round key`() {
         val initialState = State(
                 Word(0x04, 0x66, 0x81, 0xE5),
                 Word(0xE0, 0xCB, 0x19, 0x9A),
@@ -175,5 +175,39 @@ class StateTests {
                 Word(0x2A, 0x6C, 0x76, 0x05))
 
         assertEquals(expectedState, initialState.addRoundKey(firstExpandedKey))
+    }
+
+    @Test
+    fun `xor other State object`() {
+        val initialState = State(
+                Word(0x04, 0x66, 0x81, 0xE5),
+                Word(0xE0, 0xCB, 0x19, 0x9A),
+                Word(0x48, 0xF8, 0xD3, 0x7A),
+                Word(0x28, 0x06, 0x26, 0x4C)
+        )
+
+        val otherState = State(
+                Word(0xA0, 0xFA, 0xFE, 0x17),
+                Word(0x88, 0x54, 0x2C, 0xB1),
+                Word(0x23, 0xA3, 0x39, 0x39),
+                Word(0x2A, 0x6C, 0x76, 0x05))
+
+        val expectedState = State(
+                Word(0xa4, 0x9c, 0x7f, 0xf2),
+                Word(0x68, 0x9f, 0x35, 0x2b),
+                Word(0x6b, 0x5b, 0xea, 0x43),
+                Word(0x02, 0x6a, 0x50, 0x49)
+        )
+
+        assertEquals(expectedState, initialState.xorOtherState(otherState))
+
+//        for (i in 0..3) {
+//            print("Word(")
+//            print((0..3).map { b ->
+//                "0x${java.lang.Integer.toHexString(initialState[i][b] xor otherState[i][b]).padStart(2, '0')}"
+//            }.joinToString(separator = ", "))
+//            print(")")
+//            println()
+//        }
     }
 }

@@ -99,12 +99,12 @@ class Word : TypedMaxLengthMutableList<Int> {
         )
     }
 
-    fun addKey(key: Word): Word {
+    fun xorOtherWord(otherWord: Word): Word {
         return Word(
-                this[0] xor key[0],
-                this[1] xor key[1],
-                this[2] xor key[2],
-                this[3] xor key[3]
+                this[0] xor otherWord[0],
+                this[1] xor otherWord[1],
+                this[2] xor otherWord[2],
+                this[3] xor otherWord[3]
         )
     }
 

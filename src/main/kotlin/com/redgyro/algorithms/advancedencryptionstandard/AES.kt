@@ -1,22 +1,53 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-fun aesEncrypt(statesInput: List<State>, cypherKey: Key, blockCypherMode: BlockCypherMode = BlockCypherMode.ECB): List<State> {
+/**
+ * Encrypt a State block using AES encryption
+ *
+ * @param statesInput List of state objects, each containing 4 Word objects
+ * @param cypherKey Public key used to encrypt the states
+ * @param blockCypherMode One of the BlockCypherMode Enum values
+ * @param initializationVector State object containing Word objects with random bytes
+ *  required when blockCypherMode is CBC
+ *  The same initializationVector is required for decrypting the CypherText
+ */
+fun aesEncrypt(
+        statesInput: List<State>,
+        cypherKey: Key,
+        blockCypherMode: BlockCypherMode = BlockCypherMode.ECB,
+        initializationVector: State = State()): List<State> {
+
     val encryptedStates = arrayListOf<State>()
+    var iv = initializationVector
 
     // Perform all operations on each state in the states list
     statesInput.forEach { state ->
-        encryptedStates.add(aesEncryptBlock(state, cypherKey, blockCypherMode))
+        if (blockCypherMode == BlockCypherMode.CBC && encryptedStates.size > 0)
+            iv = encryptedStates.last()
+
+        encryptedStates.add(aesEncryptBlock(state, cypherKey, blockCypherMode, iv))
     }
 
     return encryptedStates
 }
 
-fun aesEncryptBlock(state: State, cypherKey: Key, blockCypherMode: BlockCypherMode = BlockCypherMode.ECB): State {
+fun aesEncryptBlock(
+        state: State,
+        cypherKey: Key,
+        blockCypherMode: BlockCypherMode = BlockCypherMode.ECB,
+        initializationVector: State = State()): State {
+
+    if (blockCypherMode == BlockCypherMode.CBC && initializationVector.size == 0)
+        throw IllegalArgumentException("initializationVector state cannot be empty when blockCypherMode is CBC")
+
+
     val rounds = cypherKey.getRoundsCount()
     // Start with performing key expansion
     val keys = cypherKey.expandKeys()
 
     var roundState = state
+
+    if (blockCypherMode == BlockCypherMode.CBC)
+        roundState = roundState.xorOtherState(initializationVector)
 
     roundState.printStateAfterStepForRound(0, "Before add round key")
     roundState = roundState.addRoundKey(keys.first())

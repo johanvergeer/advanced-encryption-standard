@@ -2,6 +2,8 @@ package com.redgyro.algorithms.advancedencryptionstandard
 
 class State : TypedMaxLengthMutableList<Word> {
 
+    constructor()
+
     constructor(words: List<Word>) {
         assert(words.size == 4, { "A State object must contain exactly 4 words" })
         this.addAll(words)
@@ -75,7 +77,13 @@ class State : TypedMaxLengthMutableList<Word> {
 
     fun addRoundKey(key: Key): State {
         return State((0..3).map { word ->
-            this[word].addKey(key[word])
+            this[word].xorOtherWord(key[word])
+        })
+    }
+
+    fun xorOtherState(state: State): State{
+        return State((0..3).map { word ->
+            this[word].xorOtherWord(state[word])
         })
     }
 }
