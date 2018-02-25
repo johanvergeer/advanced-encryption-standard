@@ -79,3 +79,18 @@ class State : TypedMaxLengthMutableList<Word> {
         })
     }
 }
+
+
+fun State.printStateAfterStepForRound(round: Int, after: String): State {
+    val logLines = StringBuilder("ROUND $round $after\n")
+    (0..3).forEach { byte ->
+        (0..3).forEach { word ->
+            logLines.append("0x${java.lang.Integer.toHexString(this[word][byte]).padStart(2, '0')}  ")
+        }
+        logLines.append("\n")
+    }
+
+    println(logLines)
+
+    return this
+}

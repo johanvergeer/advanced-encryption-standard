@@ -38,7 +38,7 @@ class Key(val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) 
  * 192 bit key -> 6 words -> 12 rounds
  * 256 bit key -> 8 words -> 14 rounds
  */
-fun Key.getRounds(): Int {
+fun Key.getRoundsCount(): Int {
     // The number of rounds to encrypt the data
     return when (this.size) {
         4 -> 10
@@ -55,7 +55,7 @@ fun Key.expandKeys(): List<Key> {
     keys.add(this)
 
     // Add a expanded key for each cycle
-    for (cycle in 1..this.getRounds()) {
+    for (cycle in 1..this.getRoundsCount()) {
         keys.add(keys.last().expandKey(cycle))
     }
 

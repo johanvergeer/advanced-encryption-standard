@@ -1,19 +1,16 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
-
 @SpringBootTest
-class EncryptorTest {
+class AESTest {
     lateinit var key: Key
     lateinit var firstExpandedKeyExpectation: Key
     lateinit var lastExpandedKeyExpectation: Key
     lateinit var initialState: State
-
-    lateinit var encryptor: Encryptor
 
     @BeforeEach
     fun `setup`() {
@@ -42,8 +39,6 @@ class EncryptorTest {
                 Word(0x31, 0x31, 0x98, 0xA2),
                 Word(0xE0, 0x37, 0x07, 0x34)
         )
-
-        this.encryptor = Encryptor(listOf(this.initialState), this.key)
     }
 
     @Test
@@ -58,6 +53,15 @@ class EncryptorTest {
                 )
         )
 
-        assertEquals(expectedFinalState, this.encryptor.encryptedStates)
+        Assertions.assertEquals(expectedFinalState, aesEncrypt(listOf(this.initialState), this.key))
+    }
+
+    @Test
+    fun `Decript a single state`() {
+
+        val encryptedState = aesEncrypt(listOf(this.initialState), this.key)
+        val decryptedState = aesDecrypt(encryptedState, this.key)
+
+        Assertions.assertEquals(this.initialState, decryptedState.first())
     }
 }
