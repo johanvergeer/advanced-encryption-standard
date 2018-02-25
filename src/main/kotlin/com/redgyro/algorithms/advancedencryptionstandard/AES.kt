@@ -1,44 +1,48 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-fun aesEncrypt(statesInput: List<State>, cypherKey: Key): List<State> {
+fun aesEncrypt(statesInput: List<State>, cypherKey: Key, blockCypherMode: BlockCypherMode = BlockCypherMode.ECB): List<State> {
     val encryptedStates = arrayListOf<State>()
 
+    // Perform all operations on each state in the states list
+    statesInput.forEach { state ->
+        encryptedStates.add(aesEncryptBlock(state, cypherKey, blockCypherMode))
+    }
+
+    return encryptedStates
+}
+
+fun aesEncryptBlock(state: State, cypherKey: Key, blockCypherMode: BlockCypherMode = BlockCypherMode.ECB): State {
     val rounds = cypherKey.getRoundsCount()
     // Start with performing key expansion
     val keys = cypherKey.expandKeys()
 
-    // Perform all operations on each state in the states list
-    statesInput.forEach { state ->
-        var roundState = state
+    var roundState = state
 
-        roundState.printStateAfterStepForRound(0, "Before add round key")
-        roundState = roundState.addRoundKey(keys.first())
-        roundState.printStateAfterStepForRound(0, "After add round key")
+    roundState.printStateAfterStepForRound(0, "Before add round key")
+    roundState = roundState.addRoundKey(keys.first())
+    roundState.printStateAfterStepForRound(0, "After add round key")
 
-        (1 until rounds).forEach { round ->
-            roundState = roundState
-                    .subBytes()
-                    .printStateAfterStepForRound(round, "Sub Bytes")
-                    .shiftRows()
-                    .printStateAfterStepForRound(round, "Shift Rows")
-                    .mixColumns()
-                    .printStateAfterStepForRound(round, "Mix Columns")
-                    .addRoundKey(keys[round])
-                    .printStateAfterStepForRound(round, "Add round key")
-        }
-
+    (1 until rounds).forEach { round ->
         roundState = roundState
                 .subBytes()
-                .printStateAfterStepForRound(rounds, "Sub Bytes")
+                .printStateAfterStepForRound(round, "Sub Bytes")
                 .shiftRows()
-                .printStateAfterStepForRound(rounds, "Shift Rows")
-                .addRoundKey(keys.last())
-                .printStateAfterStepForRound(rounds, "Add round key")
-
-        encryptedStates.add(roundState)
+                .printStateAfterStepForRound(round, "Shift Rows")
+                .mixColumns()
+                .printStateAfterStepForRound(round, "Mix Columns")
+                .addRoundKey(keys[round])
+                .printStateAfterStepForRound(round, "Add round key")
     }
 
-    return encryptedStates
+    roundState = roundState
+            .subBytes()
+            .printStateAfterStepForRound(rounds, "Sub Bytes")
+            .shiftRows()
+            .printStateAfterStepForRound(rounds, "Shift Rows")
+            .addRoundKey(keys.last())
+            .printStateAfterStepForRound(rounds, "Add round key")
+
+    return roundState
 }
 
 fun aesDecrypt(statesInput: List<State>, cypherKey: Key): List<State> {
