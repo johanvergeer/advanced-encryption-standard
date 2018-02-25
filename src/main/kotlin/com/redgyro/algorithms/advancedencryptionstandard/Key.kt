@@ -1,6 +1,7 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-class Key(val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) {
+class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) {
+    var keyLength: Int = 0
 
     constructor(vararg words: Word) : this(words.toList())
 
@@ -8,6 +9,7 @@ class Key(val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) 
         assert(words.size in listOf(4, 6, 8), { "Key can hold 4, 6 or 8 words. (128, 192 or 256 bytes)" })
 
         this.innerList.addAll(this.words)
+        keyLength = this.size
     }
 
     override fun toString(): String {
@@ -40,7 +42,7 @@ class Key(val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) 
  */
 fun Key.getNumberOfRounds(): Int {
     // The number of rounds to encrypt the data
-    return when (this.size) {
+    return when (this.keyLength) {
         4 -> 10
         6 -> 12
         else -> 14
@@ -71,7 +73,7 @@ internal fun Key.expandKey(cycleNo: Int): Key {
     val nextKeyWords = arrayListOf(lastWord.shiftBytesLeft().subBytes().rConReplace(cycleNo, this[0]))
 
     // Add the rest of the words to the temporary list
-    for (k in 1 until this.size) {
+    for (k in 1 until this.keyLength) {
         lastWord = nextKeyWords.last()
 
         // Add a word with 4 bytes
