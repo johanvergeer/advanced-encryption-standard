@@ -59,7 +59,7 @@ class StateTests {
     }
 
     @Test
-    fun `Sub Bytes`(){
+    fun `Sub Bytes for encryption`(){
         val initialState = State(
                 Word(0x19, 0x3D, 0xE3, 0xBE),
                 Word(0xA0, 0xF4, 0xE2, 0x2B),
@@ -74,6 +74,18 @@ class StateTests {
         )
 
         assertEquals(expectedState, initialState.subBytes())
+    }
+
+    @Test
+    fun `Sub Bytes inverse for decription`(){
+        val initialState = State(
+                Word(0x19, 0x3D, 0xE3, 0xBE),
+                Word(0xA0, 0xF4, 0xE2, 0x2B),
+                Word(0x9A, 0xC6, 0x8D, 0x2A),
+                Word(0xE9, 0xF8, 0x48, 0x08)
+        )
+
+        assertEquals(initialState, initialState.subBytes().subBytesInverse())
     }
 
     @Test
@@ -109,7 +121,7 @@ class StateTests {
     }
 
     @Test
-    fun `Mix Columns`(){
+    fun `Mix Columns for encryption`(){
         val initialState = State(
                 Word(0xD4, 0xBF, 0x5D, 0x30),
                 Word(0xE0, 0xB4, 0x52, 0xAE),
@@ -125,6 +137,19 @@ class StateTests {
         )
 
         assertEquals(expectedState, initialState.mixColumns())
+    }
+
+    @Test
+    fun `Mix Columns for decryption`(){
+        val initialState = State(
+                Word(0xD4, 0xBF, 0x5D, 0x30),
+                Word(0xE0, 0xB4, 0x52, 0xAE),
+                Word(0xB8, 0x41, 0x11, 0xF1),
+                Word(0x1E, 0x27, 0x98, 0xE5)
+        )
+
+        // After inverse of mix columns, the state should be equal to the initial state
+        assertEquals(initialState, initialState.mixColumns().mixColumnsInverse())
     }
 
     @Test

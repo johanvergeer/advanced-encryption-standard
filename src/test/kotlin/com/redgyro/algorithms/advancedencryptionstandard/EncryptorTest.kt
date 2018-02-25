@@ -47,38 +47,6 @@ class EncryptorTest {
     }
 
     @Test
-    fun `Create list containing expanded keys`() {
-        // The list should have a length of 11 keys.
-
-        // expandKeys() is called in init block
-//        this.encryptor.expandKeys()
-
-        assertEquals(11, this.encryptor.keys.size)
-        assertEquals(this.firstExpandedKeyExpectation, this.encryptor.keys[1])
-        assertEquals(this.lastExpandedKeyExpectation, this.encryptor.keys[10])
-    }
-
-    @Test
-    fun `Create the first expanded key`() {
-
-        val expandedKey = encryptor.expandKey(1, this.key)
-
-        assertEquals(this.firstExpandedKeyExpectation, expandedKey)
-    }
-
-    @Test
-    fun `Create 10 expanded keys and test the last one`() {
-
-        var lastKey = this.key
-        for (round in 1..10) {
-            lastKey = encryptor.expandKey(round, lastKey)
-        }
-
-
-        assertEquals(this.lastExpandedKeyExpectation, lastKey)
-    }
-
-    @Test
     fun `Encrypt a single state`() {
 
         val expectedFinalState = listOf(
