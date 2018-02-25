@@ -1,13 +1,11 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import org.springframework.boot.test.context.SpringBootTest
 
 
-@SpringBootTest
 class StateTests {
 
     @BeforeEach
@@ -40,22 +38,24 @@ class StateTests {
 
     @Test
     fun `Create state with less then 4 words from list`() {
-        assertThrows<AssertionError>({
-            State(listOf(Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00))
-            )
-        })
+        assertThrows(AssertionError::class.java,
+                {
+                    State(listOf(Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00))
+                    )
+                })
     }
 
     @Test
     fun `Create state with more then 4 words from list`() {
-        assertThrows<AssertionError> {
-            State(listOf(Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00))
-            )
-        }
+        assertThrows(AssertionError::class.java,
+                {
+                    State(listOf(Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00))
+                    )
+                })
     }
 
     @Test

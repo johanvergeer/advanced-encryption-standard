@@ -3,7 +3,6 @@ package com.redgyro.algorithms.advancedencryptionstandard
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 
 /**
  * Used to test all values except for ECB:
@@ -40,7 +39,6 @@ import org.springframework.boot.test.context.SpringBootTest
  * Replace with: State(\nWord(0x$1, 0x$2, 0x$3, 0x$4), \nWord(0x$5, 0x$6, 0x$7, 0x$8), \nWord(0x$9, 0x$10, 0x$11, 0x$12), \nWord(0x$13, 0x$14, 0x$15, 0x$16)\n)
  */
 
-@SpringBootTest
 class AESTest {
     lateinit var key: Key
     lateinit var key128bit: Key

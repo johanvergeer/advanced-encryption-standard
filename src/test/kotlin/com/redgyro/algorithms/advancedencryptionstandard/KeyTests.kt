@@ -1,10 +1,11 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.springframework.boot.test.context.SpringBootTest
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import sun.jvm.hotspot.utilities.Assert
 
-@SpringBootTest
 class KeyTests {
     lateinit var key128bit: Key
     lateinit var key192bit: Key
@@ -13,7 +14,7 @@ class KeyTests {
     lateinit var lastExpandedKeyExpectation: Key
 
     @BeforeEach
-    fun `setUp`(){
+    fun `setUp`() {
         this.key128bit = Key(
                 Word(0x2B, 0x7E, 0x15, 0x16),
                 Word(0x28, 0xAE, 0xD2, 0xA6),
@@ -98,40 +99,44 @@ class KeyTests {
 
     @Test
     fun `Test create key less then 128 bytes`() {
-        assertThrows<AssertionError> {
-            val key = Key(
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00)
-            )
-        }
+        assertThrows(AssertionError::class.java,
+                {
+                    val key = Key(
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00)
+                    )
+                }
+        )
 
     }
 
     @Test
     fun `Test create key more then 256 bytes`() {
-        assertThrows<AssertionError> {
-            val key = Key(
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00),
-                    Word(0x00, 0x00, 0x00, 0x00)
-            )
-        }
+        assertThrows(AssertionError::class.java,
+                {
+                    val key = Key(
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00),
+                            Word(0x00, 0x00, 0x00, 0x00)
+                    )
+                }
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun `Create list containing expanded keys`() {
         val expandedKeys = this.key128bit.expandKeys()
 
-        Assertions.assertEquals(11, expandedKeys.size)
-        Assertions.assertEquals(this.firstExpandedKeyExpectation, expandedKeys[1])
-        Assertions.assertEquals(this.lastExpandedKeyExpectation, expandedKeys[10])
+        assertEquals(11, expandedKeys.size)
+        assertEquals(this.firstExpandedKeyExpectation, expandedKeys[1])
+        assertEquals(this.lastExpandedKeyExpectation, expandedKeys[10])
     }
 
     @org.junit.jupiter.api.Test
@@ -139,7 +144,7 @@ class KeyTests {
 
         val expandedKey = this.key128bit.expandKey(1)
 
-        Assertions.assertEquals(this.firstExpandedKeyExpectation, expandedKey)
+        assertEquals(this.firstExpandedKeyExpectation, expandedKey)
     }
 
     @org.junit.jupiter.api.Test
@@ -150,7 +155,7 @@ class KeyTests {
             lastKey = lastKey.expandKey(round)
         }
 
-        Assertions.assertEquals(this.lastExpandedKeyExpectation, lastKey)
+        assertEquals(this.lastExpandedKeyExpectation, lastKey)
     }
 
 }
