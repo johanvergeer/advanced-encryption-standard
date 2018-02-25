@@ -1,5 +1,7 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
+import kotlin.math.exp
+
 class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) {
     var keyLength: Int = 0
         private set
@@ -26,7 +28,8 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
         numberOfRounds = when (this.keyLength) {
             4 -> 10
             6 -> 12
-            else -> 14
+            8 -> 14
+            else -> throw IllegalArgumentException("keyLength must be 4, 6 or 8")
         }
     }
 
@@ -47,38 +50,53 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
     override fun hashCode(): Int {
         return words.hashCode()
     }
-}
 
 
-fun Key.expandKeys(): List<Key> {
-    val keys = arrayListOf<Key>()
+    fun expandKeys(): List<Key> {
+        val expandedKeys = arrayListOf<Key>()
 
-    // Add the original cypherKey to the list
-    keys.add(this)
+        when (this.keyLength) {
+            4 -> {
+                // Add the original cypherKey to the list
+                expandedKeys.add(this)
 
-    // Add a expanded key for each cycle
-    for (round in 1..this.numberOfRounds) {
-        keys.add(keys.last().expandKey(round))
+                // Add a expanded key for each cycle
+                for (round in 1..this.numberOfRounds) {
+                    expandedKeys.add(expandedKeys.last().expand128bitKey(round))
+                }
+
+                return expandedKeys
+            }
+            6 -> {
+                return expandedKeys
+            }
+            8 -> {
+                return expandedKeys
+            }
+            else -> throw IllegalArgumentException("keyLength must be 4, 6 or 8")
+        }
     }
 
-    return keys
-}
+    internal fun expand128bitKey(cycleNo: Int): Key {
 
-internal fun Key.expandKey(cycleNo: Int): Key {
+        // Last word of the last expanded key or cypher key
+        var lastWord = this.last()
 
-    // Last word of the last expanded key or cypher key
-    var lastWord = this.last()
+        // Create a temporary list for the next key and add the first word
+        val nextKeyWords = arrayListOf(lastWord.shiftBytesLeft().subBytes().rConReplace(cycleNo, this[0]))
 
-    // Create a temporary list for the next key and add the first word
-    val nextKeyWords = arrayListOf(lastWord.shiftBytesLeft().subBytes().rConReplace(cycleNo, this[0]))
+        // Add the rest of the words to the temporary list
+        for (k in 1 until this.keyLength) {
+            lastWord = nextKeyWords.last()
 
-    // Add the rest of the words to the temporary list
-    for (k in 1 until this.keyLength) {
-        lastWord = nextKeyWords.last()
+            // Add a word with 4 bytes
+            nextKeyWords.add(Word((0..3).map { b -> this[k][b] xor lastWord[b] }))
+        }
 
-        // Add a word with 4 bytes
-        nextKeyWords.add(Word((0..3).map { b -> this[k][b] xor lastWord[b] }))
+        return Key(nextKeyWords)
     }
 
-    return Key(nextKeyWords)
+    internal fun expand192bitKey(cycleNo: Int): Key {
+        return Key()
+    }
 }
