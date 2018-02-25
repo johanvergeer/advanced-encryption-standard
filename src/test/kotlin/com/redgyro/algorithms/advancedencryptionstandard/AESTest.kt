@@ -204,14 +204,15 @@ class AESTest {
                 )
         )
 
-        assertEquals(expectedFinalState, aesEncrypt(listOf(this.initialState), this.key))
+        val aes = AES(listOf(this.initialState), this.key)
+
+        assertEquals(expectedFinalState, aes.encrypt())
     }
 
     @Test
     fun `Decrypt a single state using ECB`() {
-
-        val encryptedState = aesEncrypt(listOf(this.initialState), this.key)
-        val decryptedState = aesDecrypt(encryptedState, this.key)
+        val encryptedState = AES(listOf(this.initialState), this.key).encrypt()
+        val decryptedState = AES(encryptedState, this.key).decrypt()
 
         assertEquals(this.initialState, decryptedState.first())
     }
@@ -252,13 +253,15 @@ class AESTest {
                 )
         )
 
-        assertEquals(expectedFinalState, aesEncrypt(this.initialStates, this.key128bit))
+        val aes = AES(this.initialStates, this.key128bit)
+
+        assertEquals(expectedFinalState, aes.encrypt())
     }
 
     @Test
     fun `Encrypt and Decrypt a list of states using ECB`() {
-        val encryptedState= aesEncrypt(this.initialStates, this.key128bit)
-        val decryptedState = aesDecrypt(encryptedState, this.key128bit)
+        val encryptedState = AES(this.initialStates, this.key128bit).encrypt()
+        val decryptedState = AES(encryptedState, this.key128bit).decrypt()
 
         assertEquals(this.initialStates, decryptedState)
     }
@@ -299,30 +302,29 @@ class AESTest {
                 )
         )
 
-        val encryptedState = aesEncrypt(
-                this.initialStates,
+        val aes = AES(this.initialStates,
                 this.key128bit,
                 BlockCypherMode.CBC,
                 this.initializationVector)
 
-        assertEquals(expectedStatesCBC, encryptedState)
+        assertEquals(expectedStatesCBC, aes.encrypt())
     }
 
     @Test
     fun `Decrypt a list of states using CBC`() {
 
-        val encryptedState = aesEncrypt(
+        val encryptedState = AES(
                 this.initialStates,
                 this.key128bit,
                 BlockCypherMode.CBC,
-                this.initializationVector)
+                this.initializationVector).encrypt()
 
-        val decryptedState = aesDecrypt(
+        val decryptedState = AES(
                 encryptedState,
                 this.key128bit,
                 BlockCypherMode.CBC,
                 this.initializationVector
-        )
+        ).decrypt()
 
         assertEquals(this.initialStates, decryptedState)
     }

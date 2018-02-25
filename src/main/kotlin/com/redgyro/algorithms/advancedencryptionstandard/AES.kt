@@ -10,133 +10,111 @@ package com.redgyro.algorithms.advancedencryptionstandard
  *  required when blockCypherMode is CBC
  *  The same initializationVector is required for decrypting the CypherText
  */
-fun aesEncrypt(
-        statesInput: List<State>,
-        cypherKey: Key,
-        blockCypherMode: BlockCypherMode = BlockCypherMode.ECB,
-        initializationVector: State = State()): List<State> {
+class AES(private val statesInput: List<State>,
+          private val cypherKey: Key,
+          private val blockCypherMode: BlockCypherMode = BlockCypherMode.ECB,
+          private var initializationVector: State = State()) {
 
-    val encryptedStates = arrayListOf<State>()
-    var iv = initializationVector
+    private val processedStates = arrayListOf<State>()
+    private val roundKeys = arrayListOf<Key>()
+    private var numberOfRounds = 0
 
-    // Perform all operations on each state in the states list
-    statesInput.forEach { state ->
-        if (blockCypherMode == BlockCypherMode.CBC && encryptedStates.size > 0)
-            iv = encryptedStates.last()
+    init {
+        roundKeys.addAll(cypherKey.expandKeys())
+        numberOfRounds = cypherKey.numberOfRounds
 
-        encryptedStates.add(aesEncryptBlock(state, cypherKey, blockCypherMode, iv))
+        if (this.blockCypherMode == BlockCypherMode.CBC && this.initializationVector.size == 0)
+            throw IllegalArgumentException("initializationVector state cannot be empty when blockCypherMode is CBC")
     }
 
-    return encryptedStates
-}
+    fun encrypt(): List<State> {
+        this.statesInput.forEach { state ->
+            if (blockCypherMode == BlockCypherMode.CBC && this.processedStates.size > 0)
+                this.initializationVector = this.processedStates.last()
 
-fun aesEncryptBlock(state: State,
-                    cypherKey: Key,
-                    blockCypherMode: BlockCypherMode = BlockCypherMode.ECB,
-                    initializationVector: State = State()): State {
+            this.processedStates.add(this.encryptBlock(state))
+        }
 
-    if (blockCypherMode == BlockCypherMode.CBC && initializationVector.size == 0)
-        throw IllegalArgumentException("initializationVector state cannot be empty when blockCypherMode is CBC")
+        return this.processedStates
+    }
 
+    private fun encryptBlock(state: State): State {
+        var roundState = state
 
-    val rounds = cypherKey.getNumberOfRounds()
-    // Start with performing key expansion
-    val keys = cypherKey.expandKeys()
+        if (this.blockCypherMode == BlockCypherMode.CBC)
+            roundState = roundState.xorOtherState(initializationVector)
 
-    var roundState = state
+        roundState.printStateAfterStepForRound(0, "Before add round key")
+        roundState = roundState.addRoundKey(this.roundKeys.first())
+        roundState.printStateAfterStepForRound(0, "After add round key")
 
-    if (blockCypherMode == BlockCypherMode.CBC)
-        roundState = roundState.xorOtherState(initializationVector)
+        (1 until this.numberOfRounds).forEach { round ->
+            roundState = roundState
+                    .subBytes()
+                    .printStateAfterStepForRound(round, "Sub Bytes")
+                    .shiftRows()
+                    .printStateAfterStepForRound(round, "Shift Rows")
+                    .mixColumns()
+                    .printStateAfterStepForRound(round, "Mix Columns")
+                    .addRoundKey(this.roundKeys[round])
+                    .printStateAfterStepForRound(round, "Add round key")
+        }
 
-    roundState.printStateAfterStepForRound(0, "Before add round key")
-    roundState = roundState.addRoundKey(keys.first())
-    roundState.printStateAfterStepForRound(0, "After add round key")
-
-    (1 until rounds).forEach { round ->
         roundState = roundState
                 .subBytes()
-                .printStateAfterStepForRound(round, "Sub Bytes")
+                .printStateAfterStepForRound(this.numberOfRounds, "Sub Bytes")
                 .shiftRows()
-                .printStateAfterStepForRound(round, "Shift Rows")
-                .mixColumns()
-                .printStateAfterStepForRound(round, "Mix Columns")
-                .addRoundKey(keys[round])
-                .printStateAfterStepForRound(round, "Add round key")
+                .printStateAfterStepForRound(this.numberOfRounds, "Shift Rows")
+                .addRoundKey(this.roundKeys.last())
+                .printStateAfterStepForRound(this.numberOfRounds, "Add round key")
+
+        return roundState
     }
 
-    roundState = roundState
-            .subBytes()
-            .printStateAfterStepForRound(rounds, "Sub Bytes")
-            .shiftRows()
-            .printStateAfterStepForRound(rounds, "Shift Rows")
-            .addRoundKey(keys.last())
-            .printStateAfterStepForRound(rounds, "Add round key")
+    fun decrypt(): List<State> {
+        // Perform all operations on each state in the states list
+        this.statesInput.forEachIndexed { i, state ->
+            if (blockCypherMode == BlockCypherMode.CBC && processedStates.size > 0)
+                this.initializationVector = this.statesInput[i - 1]
 
-    return roundState
-}
+            this.processedStates.add(this.decryptBlock(state))
+        }
 
-fun aesDecrypt(cypherText: List<State>,
-               cypherKey: Key,
-               blockCypherMode: BlockCypherMode = BlockCypherMode.ECB,
-               initializationVector: State = State()): List<State> {
-
-    var iv = initializationVector
-    val decryptedStates = arrayListOf<State>()
-
-
-    // Perform all operations on each state in the states list
-    cypherText.forEachIndexed { i, state ->
-        if (blockCypherMode == BlockCypherMode.CBC && decryptedStates.size > 0)
-            iv = cypherText[i - 1]
-
-        decryptedStates.add(aesDecryptBlock(state, cypherKey, blockCypherMode, iv))
+        return this.processedStates
     }
 
-    return decryptedStates
-}
+    private fun decryptBlock(state: State): State {
+        var roundState = state
 
-fun aesDecryptBlock(state: State,
-                    cypherKey: Key,
-                    blockCypherMode: BlockCypherMode = BlockCypherMode.ECB,
-                    initializationVector: State = State()): State {
+        roundState.printStateAfterStepForRound(0, "Before add round key")
+        roundState = roundState.addRoundKey(this.roundKeys.last())
+        roundState.printStateAfterStepForRound(0, "After add round key")
 
-    if (blockCypherMode == BlockCypherMode.CBC && initializationVector.size == 0)
-        throw IllegalArgumentException("initializationVector state cannot be empty when blockCypherMode is CBC")
+        (this.numberOfRounds - 1 downTo 1).forEach { round ->
+            val roundToPrint = this.numberOfRounds - round
 
-    val rounds = cypherKey.getNumberOfRounds()
-    // Start with performing key expansion
-    val keys = cypherKey.expandKeys()
-
-    var roundState = state
-
-    roundState.printStateAfterStepForRound(0, "Before add round key")
-    roundState = roundState.addRoundKey(keys.last())
-    roundState.printStateAfterStepForRound(0, "After add round key")
-
-    (rounds - 1 downTo 1).forEach { round ->
-        val roundToPrint = rounds - round
+            roundState = roundState
+                    .shiftRowsInverse()
+                    .printStateAfterStepForRound(roundToPrint, "Shift Rows Inverse")
+                    .subBytesInverse()
+                    .printStateAfterStepForRound(roundToPrint, "Sub Bytes inverse")
+                    .addRoundKey(this.roundKeys[round])
+                    .printStateAfterStepForRound(roundToPrint, "Add round key")
+                    .mixColumnsInverse()
+                    .printStateAfterStepForRound(roundToPrint, "Mix Columns inverse")
+        }
 
         roundState = roundState
                 .shiftRowsInverse()
-                .printStateAfterStepForRound(roundToPrint, "Shift Rows Inverse")
+                .printStateAfterStepForRound(this.numberOfRounds, "Shift rows inverse")
                 .subBytesInverse()
-                .printStateAfterStepForRound(roundToPrint, "Sub Bytes inverse")
-                .addRoundKey(keys[round])
-                .printStateAfterStepForRound(roundToPrint, "Add round key")
-                .mixColumnsInverse()
-                .printStateAfterStepForRound(roundToPrint, "Mix Columns inverse")
+                .printStateAfterStepForRound(this.numberOfRounds, "Sub Bytes inverse")
+                .addRoundKey(this.roundKeys.first())
+                .printStateAfterStepForRound(this.numberOfRounds, "Add round key")
+
+        if (blockCypherMode == BlockCypherMode.CBC)
+            roundState = roundState.xorOtherState(initializationVector)
+
+        return roundState
     }
-
-    roundState = roundState
-            .shiftRowsInverse()
-            .printStateAfterStepForRound(rounds, "Shift rows inverse")
-            .subBytesInverse()
-            .printStateAfterStepForRound(rounds, "Sub Bytes inverse")
-            .addRoundKey(keys.first())
-            .printStateAfterStepForRound(rounds, "Add round key")
-
-    if (blockCypherMode == BlockCypherMode.CBC)
-        roundState = roundState.xorOtherState(initializationVector)
-
-    return roundState
 }

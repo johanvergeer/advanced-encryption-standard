@@ -2,6 +2,9 @@ package com.redgyro.algorithms.advancedencryptionstandard
 
 class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) {
     var keyLength: Int = 0
+        private set
+    var numberOfRounds = 0
+        private set
 
     constructor(vararg words: Word) : this(words.toList())
 
@@ -9,7 +12,22 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
         assert(words.size in listOf(4, 6, 8), { "Key can hold 4, 6 or 8 words. (128, 192 or 256 bytes)" })
 
         this.innerList.addAll(this.words)
+
+        // Key length property is only to match the AES standard descriptions
         keyLength = this.size
+
+        /**
+         * Set the number of keys required to encrypt the states
+         *
+         * 128 bit key -> 4 words -> 10 rounds
+         * 192 bit key -> 6 words -> 12 rounds
+         * 256 bit key -> 8 words -> 14 rounds
+         */
+        numberOfRounds = when (this.keyLength) {
+            4 -> 10
+            6 -> 12
+            else -> 14
+        }
     }
 
     override fun toString(): String {
@@ -29,24 +47,6 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
     override fun hashCode(): Int {
         return words.hashCode()
     }
-
-
-}
-
-/**
- * Get the number of keys required to encrypt the states
- *
- * 128 bit key -> 4 words -> 10 rounds
- * 192 bit key -> 6 words -> 12 rounds
- * 256 bit key -> 8 words -> 14 rounds
- */
-fun Key.getNumberOfRounds(): Int {
-    // The number of rounds to encrypt the data
-    return when (this.keyLength) {
-        4 -> 10
-        6 -> 12
-        else -> 14
-    }
 }
 
 
@@ -57,8 +57,8 @@ fun Key.expandKeys(): List<Key> {
     keys.add(this)
 
     // Add a expanded key for each cycle
-    for (cycle in 1..this.getNumberOfRounds()) {
-        keys.add(keys.last().expandKey(cycle))
+    for (round in 1..this.numberOfRounds) {
+        keys.add(keys.last().expandKey(round))
     }
 
     return keys
