@@ -1,7 +1,5 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-import kotlin.math.exp
-
 class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSize = 8) {
     var keyLength: Int = 0
         private set
@@ -34,10 +32,11 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
     }
 
     override fun toString(): String {
-        return "Key:\n${words[0]}\n" +
-                "${words[1]}\n" +
-                "${words[2]}\n" +
-                "${words[3]}"
+        val string = StringBuilder()
+        string.append("Key:\n")
+        words.forEach { word -> string.append("$word\n") }
+
+        return string.toString()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -62,12 +61,29 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
 
                 // Add a expanded key for each cycle
                 for (round in 1..this.numberOfRounds) {
-                    expandedKeys.add(expandedKeys.last().expand128bitKey(round))
+                    expandedKeys.add(expandedKeys.last().expandKey(round))
                 }
 
                 return expandedKeys
             }
             6 -> {
+                var lastExpandedKey = this
+                val expandedKeysWords = arrayListOf<Word>()
+
+                expandedKeysWords.addAll(this)
+
+                for (round in 1..8) {
+                    val expandedKey = lastExpandedKey.expandKey(round)
+                    lastExpandedKey = expandedKey
+
+                    expandedKeysWords.addAll(expandedKey)
+                }
+
+                expandedKeysWords.chunked(4).map { chunk ->
+                    if (chunk.size == 4)
+                        expandedKeys.add(Key(chunk))
+                }
+
                 return expandedKeys
             }
             8 -> {
@@ -77,7 +93,10 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
         }
     }
 
-    internal fun expand128bitKey(cycleNo: Int): Key {
+    /**
+     * Expand 128 and 192 bit keys
+     */
+    internal fun expandKey(cycleNo: Int): Key {
 
         // Last word of the last expanded key or cypher key
         var lastWord = this.last()
@@ -94,9 +113,5 @@ class Key(private val words: List<Word>) : TypedMaxLengthMutableList<Word>(maxSi
         }
 
         return Key(nextKeyWords)
-    }
-
-    internal fun expand192bitKey(cycleNo: Int): Key {
-        return Key()
     }
 }
