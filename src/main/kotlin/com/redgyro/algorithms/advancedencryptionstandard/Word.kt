@@ -1,6 +1,6 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-import com.redgyro.education.cssdaes.advancedEncryptionStandard.transformationTables.*
+import com.redgyro.algorithms.advancedencryptionstandard.transformationTables.*
 
 class Word : TypedMaxLengthMutableList<Int> {
 
@@ -87,6 +87,15 @@ class Word : TypedMaxLengthMutableList<Int> {
                 this[0] xor mul2[this[1]] xor mul3[this[2]] xor this[3],
                 this[0] xor this[1] xor mul2[this[2]] xor mul3[this[3]],
                 mul3[this[0]] xor this[1] xor this[2] xor mul2[this[3]]
+        )
+    }
+
+    fun mixColumnsInverse(): Word {
+        return Word(
+                mul14[this[0]] xor mul11[this[1]] xor mul13[this[2]] xor mul9[this[3]],
+                mul9[this[0]] xor mul14[this[1]] xor mul11[this[2]] xor mul13[this[3]],
+                mul13[this[0]] xor mul9[this[1]] xor mul14[this[2]] xor mul11[this[3]],
+                mul11[this[0]] xor mul13[this[1]] xor mul9[this[2]] xor mul14[this[3]]
         )
     }
 

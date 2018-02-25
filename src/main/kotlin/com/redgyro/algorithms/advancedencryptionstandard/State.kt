@@ -46,6 +46,15 @@ class State : TypedMaxLengthMutableList<Word> {
         )
     }
 
+    fun shiftRowsInverse(): State {
+        return State(
+                Word(this[0][0], this[3][1], this[2][2], this[1][3]),
+                Word(this[1][0], this[0][1], this[3][2], this[2][3]),
+                Word(this[2][0], this[1][1], this[0][2], this[3][3]),
+                Word(this[3][0], this[2][1], this[1][2], this[0][3])
+        )
+    }
+
     fun mixColumns(): State {
         return State((0..3).map { word ->
             this[word].mixColumns()

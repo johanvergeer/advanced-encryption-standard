@@ -77,7 +77,7 @@ class StateTests {
     }
 
     @Test
-    fun `Shift rows`(){
+    fun `Shift rows for encryption`(){
         val initialState = State(
                 Word(0xD4, 0x27, 0x11, 0xAE),
                 Word(0xE0, 0xBF, 0x98, 0xF1),
@@ -93,6 +93,19 @@ class StateTests {
         )
 
         assertEquals(expectedState, initialState.shiftRows())
+    }
+
+    @Test
+    fun `Shift rows inverse for description`(){
+        val initialState = State(
+                Word(0xD4, 0x27, 0x11, 0xAE),
+                Word(0xE0, 0xBF, 0x98, 0xF1),
+                Word(0xB8, 0xB4, 0x5D, 0xE5),
+                Word(0x1E, 0x41, 0x52, 0x30)
+        )
+
+        // After shift rows inverse, the final state should be equal to the initial state
+        assertEquals(initialState, initialState.shiftRows().shiftRowsInverse())
     }
 
     @Test

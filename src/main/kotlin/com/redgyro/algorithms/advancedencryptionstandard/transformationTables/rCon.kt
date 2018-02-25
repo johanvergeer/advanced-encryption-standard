@@ -1,4 +1,4 @@
-package com.redgyro.education.cssdaes.advancedEncryptionStandard.transformationTables
+package com.redgyro.algorithms.advancedencryptionstandard.transformationTables
 
 // rCon is Round Constant used for the Key Expansion, first column is 2^(r-1) in GF(2^8)
 val rCon = arrayOf(

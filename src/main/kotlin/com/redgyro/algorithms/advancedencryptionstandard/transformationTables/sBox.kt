@@ -1,4 +1,4 @@
-package com.redgyro.education.cssdaes.advancedEncryptionStandard.transformationTables
+package com.redgyro.algorithms.advancedencryptionstandard.transformationTables
 
 // sBox is the pre-computed multiplicative inverse in GF(2^8) used in subBytes() and also in the keyExpansion.
 val sBox = arrayOf(

@@ -133,6 +133,13 @@ class WordTests {
     }
 
     @Test
+    fun `mixColumns inverse for decryption`() {
+        val word = Word(0xD4, 0xBF, 0x5D, 0x30)
+
+        assertEquals(word, word.mixColumns().mixColumnsInverse())
+    }
+
+    @Test
     fun `addKey`() {
         val word = Word(0x04, 0x66, 0x81, 0xE5)
         val key = Word(0xA0, 0xFA, 0xFE, 0x17)

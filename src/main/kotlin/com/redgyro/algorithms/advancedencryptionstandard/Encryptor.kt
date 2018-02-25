@@ -1,12 +1,9 @@
 package com.redgyro.algorithms.advancedencryptionstandard
 
-import com.sun.org.apache.xpath.internal.operations.Bool
-
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class Encryptor(private val statesInput: List<State>, private val cypherKey: Key) {
     internal val keys = mutableListOf<Key>()
-    //    private var statesInput: List<State>
     private var rounds: Int = 10
 
     private val _encryptedStates = mutableListOf<State>()
